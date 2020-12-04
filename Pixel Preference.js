@@ -22,7 +22,7 @@ const PREVIEW_SIZE = "medium"; // 미리보기 사이즈 (small, medium, large)
 
 const REFRESH_VIEW = false; // 리프레시된 마지막 시각을 위젯 하단에 표시하는 옵션 (true, false)
 
-const LAYOUT_MODE = "siri"; // 위젯 디자인 (pixel, siri)
+const LAYOUT_MODE = "pixel"; // 위젯 디자인 (pixel, siri)
 
 const COVID_MODE = false;
 // 코로나19에 대한 정보를 위젯 하단에 표시합니다. (true, false) - for Korea only
