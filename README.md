@@ -1,2 +1,22 @@
-# pixel_widget
-iOS Scriptable Widget, inspired by Pixel's "at a Glance" widget.
+# About Pixel Widget
+**픽셀 위젯을 통해, 당신의 아이폰에 픽셀 감성을 가득 채워보세요!**
+
+Pixel Launcher의 At a Glance 위젯에서 영감을 받아 만들어진 iOS용 Scriptable 위젯입니다. (iOS 14+ 호환)
+
+## Features
+- Pixel 스타일, 또는 인사말을 전해주는 Siri 스타일 포함
+- 다가오는 이벤트가 있을 시 남은 시간과 요약을 알려줌
+- 실시간 날씨를 그림과 함께 직관적으로 보여줌
+- 자체 런처 탑재, 그 외 다양한 기능!
+
+## 안내사항
+- 정상적인 사용을 위해, 본 소스 코드와 함께 초기값을 저장한 파일인 픽셀 프리퍼런스(Pixel Preference)파일을 필수로 설치하셔야 합니다.
+- 날씨 서비스 이용을 위해 Openweather API 키와 탐색할 도시의 City ID가 필요합니다.
+- 픽셀 위젯 스크립트를 Scriptable 앱 내에서 실행할 경우, OTA 업데이트를 포함한 여러 기능이 탑재된 픽셀 위젯 런처(Pixel Widget Launcher : PWL)가 나타납니다.
+- COVID-19 정보는 보건복지부 데이터를 사용합니다. 단 히든 코드를 편집해 추가 기능을 해금하실 수 있습니다.
+- 소스코드는 개인이 수정하셔서 사용하셔도 무방하나, 무단 재배포는 엄격히 금지합니다.
+
+## 공식 디스코드
+https://discord.gg/YG4Hf92R56
+
+읽어주셔서 감사합니다 :D
