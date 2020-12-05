@@ -1,7 +1,17 @@
-# About Pixel Widget
-**픽셀 위젯을 통해, 당신의 아이폰에 픽셀 감성을 가득 채워보세요!**
+# <img width="250" src="https://user-images.githubusercontent.com/63099769/101245589-42f28200-3751-11eb-91ad-43476ecb42b9.PNG">
+> 픽셀 위젯을 통해, 당신의 아이폰에 픽셀 감성을 가득 채워보세요!
+<div>
+<img width="300" src="https://user-images.githubusercontent.com/63099769/101245888-4be45300-3753-11eb-820e-2a9db04ee45a.png">
+<img width="300" src="https://user-images.githubusercontent.com/63099769/101245885-4850cc00-3753-11eb-95f4-79dbd77fef28.png">
+<img width="300" src="https://user-images.githubusercontent.com/63099769/101245892-4e46ad00-3753-11eb-8ad4-f72076114a31.png">
+</div>
 
 Pixel Launcher의 At a Glance 위젯에서 영감을 받아 만들어진 iOS용 Scriptable 위젯입니다. (iOS 14+ 호환)
+
+
+[다운로드](https://github.com/xkfdhr/pixel-widget/releases)
+
+[Notion에서 가이드 확인하기](https://www.notion.so/Pixel-Widget-7a953fd225e94380987f777838c0dc33)
 
 ## Features
 - Pixel 스타일, 또는 인사말을 전해주는 Siri 스타일 포함
