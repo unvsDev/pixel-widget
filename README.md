@@ -1,5 +1,5 @@
 # <img width="250" src="https://user-images.githubusercontent.com/63099769/101245589-42f28200-3751-11eb-91ad-43476ecb42b9.PNG">
-> 픽셀 위젯을 통해, 당신의 아이폰에 픽셀 감성을 가득 채워보세요!
+> **픽셀 위젯을 통해, 당신의 아이폰에 픽셀 감성을 가득 채워보세요!**
 <div>
 <img width="270" src="https://user-images.githubusercontent.com/63099769/101245888-4be45300-3753-11eb-820e-2a9db04ee45a.png">
 <img width="270" src="https://user-images.githubusercontent.com/63099769/101245885-4850cc00-3753-11eb-95f4-79dbd77fef28.png">
@@ -27,6 +27,9 @@ Pixel Launcher의 At a Glance 위젯에서 영감을 받아 만들어진 iOS용 
 - 소스코드는 개인이 수정하셔서 사용하셔도 무방하나, 무단 재배포는 엄격히 금지합니다.
 
 ## 공식 디스코드
-https://discord.gg/YG4Hf92R56
+[디스코드 링크](https://discord.gg/YG4Hf92R56)
+
+픽셀 위젯이 마음에 드시나요? 공식 디스코드에서 개발자에게 후원하실 수 있습니다!
+
 
 읽어주셔서 감사합니다 :D
