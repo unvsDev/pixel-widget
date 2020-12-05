@@ -27,7 +27,7 @@ Pixel Launcher의 At a Glance 위젯에서 영감을 받아 만들어진 iOS용 
 - 소스코드는 개인이 수정하셔서 사용하셔도 무방하나, 무단 재배포는 엄격히 금지합니다.
 
 ## 공식 디스코드
-[디스코드 링크](https://discord.gg/YG4Hf92R56)
+[디스코드 링크](https://discord.gg/BCP2S7BdaC)
 
 픽셀 위젯이 마음에 드시나요? 공식 디스코드에서 개발자에게 후원하실 수 있습니다!
 
