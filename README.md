@@ -1,5 +1,5 @@
 # <img width="250" src="https://user-images.githubusercontent.com/63099769/101245589-42f28200-3751-11eb-91ad-43476ecb42b9.PNG">
-> **Feel Pixel, Fits your iPhone.**
+> **Feel the Pixel, Fits your iPhone.**
 <div>
 <img width="270" src="https://user-images.githubusercontent.com/63099769/101245888-4be45300-3753-11eb-820e-2a9db04ee45a.png">
 <img width="270" src="https://user-images.githubusercontent.com/63099769/101245885-4850cc00-3753-11eb-95f4-79dbd77fef28.png">
@@ -29,8 +29,7 @@ iOS Scriptable Widget, inspired by Google Pixel's "at a Glance" widget.
 ## License
 - Developers can pull request for their remix source code.
 - For further information, please contact me with our Discord.
-
-**- Unauthorized redistribution of this project IS NOT ALLOWED.**
+- **Unauthorized redistribution of this project IS NOT ALLOWED.**
 
 ## Official Discord
 [Discord Link](https://discord.gg/BCP2S7BdaC)
