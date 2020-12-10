@@ -18,6 +18,7 @@ iOS Scriptable Widget, inspired by Google Pixel's "at a Glance" widget.
 - Providing information on upcoming events
 - Live Weather with epic icons! 🌈
 - Built-in Launcher for easier adaptation
+- And more!
 
 ## Announcement
 - For install, you should install both Pixel Widget and Pixel Preference.
@@ -28,6 +29,7 @@ iOS Scriptable Widget, inspired by Google Pixel's "at a Glance" widget.
 ## License
 - Developers can pull request for their remix source code.
 - For further information, please contact me with our Discord.
+
 **- Unauthorized redistribution of this project IS NOT ALLOWED.**
 
 ## Official Discord
