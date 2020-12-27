@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-blue; icon-glyph: space-shuttle;
-// Pixel Widget 2.0.2 - by unvsDev
+// Pixel Widget 2.0.3 - by unvsDev
 // with italoboy (Development) & mvan231 (Beta Tester)
 // iOS Scriptable Widget
 // inspired by Google Pixel's "at a Glance"
@@ -11,7 +11,7 @@
 // You can use Discord to contact @unvsDev!
 
 // System variables
-const bnumber = 2002; // We recommend you DO NOT EDIT this area.
+const bnumber = 2003; // We recommend you DO NOT EDIT this area.
 const UPDATE_TEST = false; // Forcing auto update
 const IGNORE_UPDATE = false; // Temporarily ignore update alert (Not recommended)
 
@@ -42,6 +42,8 @@ let CITY_WEATHER = prefData.cityid;
 let USERNAME = prefData.username;
 let TEMP_UNIT = prefData.tempunit;
 const LAYOUT_MODE = prefData.layout;
+
+const TEMP_TEXT = (TEMP_UNIT == 'metric')? "°C" : "°F"
 
 let TEXT_COLOR = new Color(prefData.textcolor);
 let ICON_COLOR = prefData.iconcolor;
@@ -374,7 +376,7 @@ if (futureEvents.length != 0) { // has event
     tintIcon(weatherIcon)
 
     // Tempeture Label
-    let tempLabel = hStack.addText(" " + Math.round(curTemp).toString() + "°C")
+    let tempLabel = hStack.addText(" " + Math.round(curTemp).toString() + TEMP_TEXT)
     tempLabel.font = new Font(FONT_NAME, 16);
     tempLabel.textColor = TEXT_COLOR
     tempLabel.textOpacity = (0.7)
@@ -433,7 +435,7 @@ if (futureEvents.length != 0) { // has event
     tintIcon(weatherIcon)
 
     // Tempeture Label
-    let tempLabel = hStack.addText(" " + Math.round(curTemp).toString() + "°C")
+    let tempLabel = hStack.addText(" " + Math.round(curTemp).toString() + TEMP_TEXT)
     tempLabel.font = new Font(FONT_NAME, 16);
     tempLabel.textColor = TEXT_COLOR
     tempLabel.textOpacity = (0.7)
@@ -467,7 +469,7 @@ if (futureEvents.length != 0) { // has event
     hStack.addSpacer(3)
 
     // Tempeture Label
-    let tempLabel = hStack.addText(Math.round(curTemp).toString() + "°C")
+    let tempLabel = hStack.addText(Math.round(curTemp).toString() + TEMP_TEXT)
     tempLabel.font = new Font(FONT_NAME, TEXT_SIZE);
     tempLabel.textColor = TEXT_COLOR
     tempLabel.centerAlignText()
@@ -519,7 +521,7 @@ if (futureEvents.length != 0) { // has event
     tintIcon(weatherIcon)
 
     // Tempeture Label
-    let tempLabel = hStack.addText(Math.round(curTemp).toString() + "°C  |  ")
+    let tempLabel = hStack.addText(Math.round(curTemp).toString() + TEMP_TEXT + "  |  ")
     tempLabel.font = new Font(FONT_NAME, 16);
     tempLabel.textColor = TEXT_COLOR
     tempLabel.textOpacity = (0.7)
