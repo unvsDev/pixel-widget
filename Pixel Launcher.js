@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-blue; icon-glyph: cannabis;
-// Pixel Launcher v1.0.2 - by unvsDev
+// Pixel Launcher v1.0.3 - by unvsDev
 // for Setting up Pixel Widget ~v2.x
 // Unauthorized Redistribute is Strictly prohibited.
 // Contact developer for question, or reporting abuse
@@ -11,7 +11,7 @@ var fm = FileManager.iCloud()
 var filePath = "/var/mobile/Library/Mobile Documents/iCloud~dk~simonbs~Scriptable/Documents/";
 var prefPath = fm.joinPath(filePath, "pixelPref.txt")
 
-const bnumber = 102; // Do NOT edit this area
+const bnumber = 103; // Do NOT edit this area
 
 var defaultJSON = {"apikey":"Your API Key","cityid":"Your City ID","layout":"pixel","username":"Sir","tempunit":"metric","locale":"en","textcolor":"#ffffff","textsize":26,"iconcolor":"false","iconsize":27,"font":"Product Sans","fontbold":"Product Sans Medium","spacing":45,"previewmode":"true","previewsize":"medium","refreshview":"false","greeting1":"Good morning","greeting2":"Good afternoon","greeting3":"Good evening","greeting4":"Good night","greeting5":"Time to sleep","greeting0":"Welcome to Pixel Widget","dateformat":"MMMM, EEE dd","quotemode":"false","bgmode":"solid","bgcolor":"#147158","iconrefresh":"false","ddaymode":"false","ddayname":"Christmas","ddaytarg":"2020-12-25"}
 
@@ -43,9 +43,9 @@ var optionName = {
   "bgmode": "Background Mode",
   "bgcolor": "Background Color",
   "iconrefresh": "AlwaysRefreshWeatherIcon",
-  "ddaymode": "D-day Mode",
-  "ddayname": "D-day Name",
-  "ddaytarg": "D-day Date"
+  "ddaymode": "Day Count Mode",
+  "ddayname": "Day Count Name",
+  "ddaytarg": "Day Count Date"
 }
 
 var optionFormat = {
