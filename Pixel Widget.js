@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-blue; icon-glyph: space-shuttle;
-// Pixel Widget 2.0.3 - by unvsDev
+// Pixel Widget 2.2 - by unvsDev
 // with italoboy (Development) & mvan231 (Beta Tester)
 // iOS Scriptable Widget
 // inspired by Google Pixel's "at a Glance"
@@ -10,17 +10,40 @@
 // Contact developer for question, or reporting abuse
 // You can use Discord to contact @unvsDev!
 
-// System variables
-const bnumber = 2003; // We recommend you DO NOT EDIT this area.
-const UPDATE_TEST = false; // Forcing auto update
-const IGNORE_UPDATE = false; // Temporarily ignore update alert (Not recommended)
+const version = 2.2
+const name = Script.name()
 
 // FileManager
 var fm = FileManager.iCloud()
-var filePath = "/var/mobile/Library/Mobile Documents/iCloud~dk~simonbs~Scriptable/Documents/";
-var prefPath = fm.joinPath(filePath, "pixelPref.txt")
+var prefPath = fm.joinPath(fm.documentsDirectory(), "pixelPref.txt")
+var aprPath = fm.joinPath(fm.documentsDirectory(), "pixelApr.txt")
+var namePath = fm.joinPath(fm.documentsDirectory(), "plName.txt")
 
-fm.writeString(fm.joinPath(filePath, "pixelVer.txt"), JSON.stringify({"version":bnumber,"ignore":IGNORE_UPDATE,"license":"normal"}))
+const plName = fm.readString(namePath)
+
+var minVer = parseFloat(await new Request("https://github.com/unvsDev/pixel-widget/raw/main/VERSION").loadString())
+
+if(minVer > version || plName == "forceupdate"){
+  var plCode = await new Request("https://github.com/unvsDev/pixel-widget/raw/main/Pixel%20Launcher.js").loadString()
+  fm.writeString(fm.joinPath(fm.documentsDirectory(), plName + ".js"), plCode)
+  
+  var code = await new Request("https://github.com/unvsDev/pixel-widget/raw/main/Pixel%20Widget.js").loadString()
+  fm.writeString(fm.joinPath(fm.documentsDirectory(), name + ".js"), code)
+  
+  return 0
+}
+
+var darkMode
+// Preparing Device Appearance
+if(config.runsInApp){
+  darkMode = Device.isUsingDarkAppearance()
+  // darkMode = !(Color.dynamic(Color.white(),Color.black()).red)
+  fm.writeString(aprPath, (darkMode == true ? 1 : 0).toString())
+} else if(!fm.fileExists(aprPath)){
+  throw new Error("Please launch Pixel Widget once.")
+} else {
+  darkMode = parseInt(fm.readString(aprPath))
+}
 
 // Getting Preference
 let prefData0
@@ -28,12 +51,7 @@ if(fm.fileExists(prefPath)){
   fm.downloadFileFromiCloud(prefPath)
   prefData0 = fm.readString(prefPath)
 } else {
-  let setupAlert = new Alert()
-  setupAlert.title = "Widget Verified"
-  setupAlert.message = "Set up your widget first!\nNow Launch Pixel Launcher!"
-  setupAlert.addAction("OK")
-  await setupAlert.presentAlert()
-  return 0
+  throw new Error("Please set up your widget.")
 }
 let prefData = JSON.parse(prefData0)
 
@@ -45,8 +63,28 @@ const LAYOUT_MODE = prefData.layout;
 
 const TEMP_TEXT = (TEMP_UNIT == 'metric')? "°C" : "°F"
 
-let TEXT_COLOR = new Color(prefData.textcolor);
-let ICON_COLOR = prefData.iconcolor;
+let TEXT_COLOR = prefData.textcolor
+if(TEXT_COLOR == "auto"){
+  if(darkMode){
+    TEXT_COLOR = new Color("#ffffff");
+  } else {
+    TEXT_COLOR = new Color("#000000");
+  }
+} else {
+  TEXT_COLOR = new Color(prefData.textcolor);
+}
+
+let ICON_COLOR = prefData.iconcolor
+if(ICON_COLOR == "auto"){
+  if(darkMode){
+    ICON_COLOR = new Color("#ffffff");
+  } else {
+    ICON_COLOR = new Color("#000000");
+  }
+} else {
+  ICON_COLOR = new Color(prefData.iconcolor)
+}
+
 const TEXT_SIZE = parseInt(prefData.textsize);
 const ICON_SIZE = parseInt(prefData.iconsize);
 
@@ -284,36 +322,6 @@ let pwidget = new ListWidget();
 
 var now = new Date().getTime()
 
-const updateServer = "https://pastebin.com/raw/DX6AeT4C"
-var latestVer = await new Request(updateServer).loadString()
-
-// Widget Auto-Update
-if(!IGNORE_UPDATE) {
-    // console.log('[*] Checking update : ' + latestVer)
-
-    if(UPDATE_TEST || (bnumber < parseInt(latestVer))) { // Update process
-        pwidget.addSpacer();
-        let updateLabel = pwidget.addText("Update Available")
-        updateLabel.font = new Font(FONT_NAME_BOLD, 26);
-        updateLabel.textColor = TEXT_COLOR
-        updateLabel.centerAlignText()
-        
-        pwidget.backgroundColor = new Color("#5e77f9")
-        
-        pwidget.addSpacer();
-        pwidget.setPadding(0, 0, 0, 0);
-        
-        Script.setWidget(pwidget)
-        
-        let updateNoti = new Notification()
-        updateNoti.title = "Pixel Widget"
-        updateNoti.body = "New update available! Download it on PWL."
-        await updateNoti.schedule()
-        return 1
-        // Force End
-    }
-}
-
 pwidget.addSpacer(SPACING); // Top Spacing
 
 for (const event of events) {
@@ -329,11 +337,12 @@ for (const event of events) {
 var img = Image.fromFile(await fetchimagelocal(iconData + "_ico"));
 
 function tintIcon(object){
-  if(prefData.iconcolor != "false") {
-    object.tintColor = new Color(prefData.iconcolor) }
+  if(prefData.iconcolor != "default") {
+    object.tintColor = ICON_COLOR
+  }
 }
 
-if (futureEvents.length != 0) { // has event
+if (futureEvents.length != 0 && prefData.event == "true") { // has event
     let futureEvent = futureEvents[0]
     
     var target = futureEvent.startDate.getTime()
@@ -480,14 +489,16 @@ if (futureEvents.length != 0) { // has event
     hStack.addSpacer()
 
     pwidget.addSpacer(8)
-
-    // Second Line
-    let hStack2 = pwidget.addStack()
-    hStack2.layoutHorizontally()
-
-    hStack2.addSpacer()
-    batteryModule(hStack2)
-    hStack2.addSpacer()
+    
+    if(prefData.hideb == "false"){
+      // Second Line
+      let hStack2 = pwidget.addStack()
+      hStack2.layoutHorizontally()
+  
+      hStack2.addSpacer()
+      batteryModule(hStack2)
+      hStack2.addSpacer()
+    }
 
 } else { // siri layout
     // Greeting label; First Line
@@ -521,7 +532,7 @@ if (futureEvents.length != 0) { // has event
     tintIcon(weatherIcon)
 
     // Tempeture Label
-    let tempLabel = hStack.addText(Math.round(curTemp).toString() + TEMP_TEXT + "  |  ")
+    let tempLabel = hStack.addText(Math.round(curTemp).toString() + TEMP_TEXT)
     tempLabel.font = new Font(FONT_NAME, 16);
     tempLabel.textColor = TEXT_COLOR
     tempLabel.textOpacity = (0.7)
@@ -529,13 +540,37 @@ if (futureEvents.length != 0) { // has event
 
     tempLabel.url = "https://openweathermap.org/city/" + CITY_WEATHER
     weatherIcon.url = "https://openweathermap.org/city/" + CITY_WEATHER
-
-    // Show Battery Icon and Percent
-    batteryModule(hStack)
+    
+    if(prefData.hideb == "false"){
+      let borderLabel = hStack.addText("  |  ")
+      borderLabel.font = new Font(FONT_NAME, 16);
+      borderLabel.textColor = TEXT_COLOR
+      borderLabel.textOpacity = (0.7)
+      borderLabel.centerAlignText()
+  
+      // Show Battery Icon and Percent
+      batteryModule(hStack)
+    }
 
     hStack.addSpacer()
 
 }
+
+/*
+
+You can add your custom label, progressBar, or image in this area. After making main layout, the widget will start to add your code under there.
+
+Let's begin!
+
+*/
+
+// Your code should start here...
+
+
+
+// and End here.
+
+
 
 // Optional Module
 function batteryModule(stack) {
@@ -646,7 +681,15 @@ function setupGradient() {
 }
 
 // Widget Background
-if(prefData.bgmode == "solid") {
+if(prefData.bgmode == "auto") {
+  if(darkMode){
+    pwidget.backgroundImage = fm.readImage(prefData.bgdark)
+  } else {
+    pwidget.backgroundImage = fm.readImage(prefData.bglight)
+  }
+} else if(prefData.bgmode == "fixed") {
+  pwidget.backgroundImage = fm.readImage(prefData.bglight)
+} else if(prefData.bgmode == "solid") {
   pwidget.backgroundColor = new Color(prefData.bgcolor)
 } else if(prefData.bgmode == "gradient") {
   const gradient = new LinearGradient()
@@ -660,7 +703,7 @@ if(prefData.bgmode == "solid") {
   pwidget.backgroundImage = fm.readImage(bgimagePath)
 }
 
-pwidget.refreshAfterDate = new Date(Date.now() + 1000 * 120) // Refresh every 120 Second
+pwidget.refreshAfterDate = new Date(Date.now() + 1000 * parseInt(prefData.refreshrate)) // Refresh every 120 Second
  
 // Set widget
 Script.setWidget(pwidget);
