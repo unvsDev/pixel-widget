@@ -1,19 +1,24 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-blue; icon-glyph: cannabis;
-// Pixel Launcher v1.0.3 - by unvsDev
-// for Setting up Pixel Widget ~v2.x
+// Pixel Launcher v2.2 - by unvsDev
+// for Setting up Pixel Widget
+
 // Unauthorized Redistribute is Strictly prohibited.
 // Contact developer for question, or reporting abuse
 // You can use Discord to contact @unvsDev!
 
+const version = 2.2
+const plName = Script.name()
+
 var fm = FileManager.iCloud()
 var filePath = "/var/mobile/Library/Mobile Documents/iCloud~dk~simonbs~Scriptable/Documents/";
 var prefPath = fm.joinPath(filePath, "pixelPref.txt")
+var namePath = fm.joinPath(filePath, "plName.txt")
 
-const bnumber = 103; // Do NOT edit this area
+fm.writeString(namePath, plName)
 
-var defaultJSON = {"apikey":"Your API Key","cityid":"Your City ID","layout":"pixel","username":"Sir","tempunit":"metric","locale":"en","textcolor":"#ffffff","textsize":26,"iconcolor":"false","iconsize":27,"font":"Product Sans","fontbold":"Product Sans Medium","spacing":45,"previewmode":"true","previewsize":"medium","refreshview":"false","greeting1":"Good morning","greeting2":"Good afternoon","greeting3":"Good evening","greeting4":"Good night","greeting5":"Time to sleep","greeting0":"Welcome to Pixel Widget","dateformat":"MMMM, EEE dd","quotemode":"false","bgmode":"solid","bgcolor":"#147158","iconrefresh":"false","ddaymode":"false","ddayname":"Christmas","ddaytarg":"2020-12-25"}
+var defaultJSON = {"apikey":"openweatherapikey","cityid":"1835848","layout":"pixel","username":"Sir","tempunit":"metric","locale":"en","textcolor":"#ffffff","textsize":"23","iconcolor":"default","iconsize":"27","font":"Product Sans","fontbold":"Product Sans Medium","spacing":"45","previewmode":"true","previewsize":"medium","refreshview":"false","greeting1":"Good morning","greeting2":"Good afternoon","greeting3":"Good evening","greeting4":"Good night","greeting5":"Time to sleep","greeting0":"Welcome to Pixel Widget","dateformat":"MMMM, EEE dd","quotemode":"false","bgmode":"solid","bglight":"null","bgdark":"null","bgcolor":"#147158","iconrefresh":"true","refreshrate":"90","ddaymode":"false","ddayname":"Christmas","ddaytarg":"2021-12-25","hideb":"false","event":"true"}
 
 var optionName = {
   "apikey": "Openweather API Key",
@@ -41,11 +46,16 @@ var optionName = {
   "dateformat": "Date Format",
   "quotemode": "UseFixedGreeting",
   "bgmode": "Background Mode",
+  "bglight": "Select Light Background",
+  "bgdark": "Select Dark Background",
   "bgcolor": "Background Color",
   "iconrefresh": "AlwaysRefreshWeatherIcon",
+  "refreshrate": "Widget Refresh Rate",
   "ddaymode": "Day Count Mode",
   "ddayname": "Day Count Name",
-  "ddaytarg": "Day Count Date"
+  "ddaytarg": "Day Count Date",
+  "hideb": "Hide Battery Icon",
+  "event": "Show Event"
 }
 
 var optionFormat = {
@@ -55,9 +65,9 @@ var optionFormat = {
   "username": "To be shown on your Widget",
   "tempunit": "(metric, imperial)",
   "locale": "For language customization",
-  "textcolor": "(Color Hex Code)",
+  "textcolor": "(auto, or Color Hex Code)",
   "textsize": "(Number)",
-  "iconcolor": "(false, or Color Hex Code)",
+  "iconcolor": "(auto, default, or Color Hex Code)",
   "iconsize": "(Number)",
   "font": "(Font Name)",
   "fontbold": "(Font Name)",
@@ -73,145 +83,110 @@ var optionFormat = {
   "greeting0": "(String) - shows when UseFixedGreeting is true",
   "dateformat": "(Date Format) - show date",
   "quotemode": "(true, false) - show fixed greeting",
-  "bgmode": "(solid, gradient, or bookmarked name)",
+  "bgmode": "(auto, fixed, solid, or gradient)",
+  "bglight": "for fixed & auto mode",
+  "bgdark": "for auto mode",
   "bgcolor": "(Color Hex Code) - solid mode",
-  "iconrefresh": "(true, false) - can cause battery drain faster",
+  "iconrefresh": "(true, false) - recommended option",
+  "refreshrate": "(second)",
   "ddaymode": "(true, false)",
   "ddayname": "(Name)",
-  "ddaytarg": "YYYY-MM-DD"
+  "ddaytarg": "YYYY-MM-DD",
+  "hideb": "(true, false)",
+  "event": "(true, false)"
 }
 
-if(!fm.fileExists(fm.joinPath(filePath, "pixelVer.txt"))){
-  let errAlert = new Alert()
-  errAlert.title = "Version Data not Found"
-  errAlert.message = "To Verify that you've installed Pixel Widget, Please launch Pixel Widget once."
-  errAlert.addAction("OK")
-  await errAlert.presentAlert()
-  return 0
-}
+var welcomemode = 0
 
-let prefData0
+// Preparing File
+let prefData0; var settingmode = 0;
 if(!(fm.fileExists(prefPath))) {
-  let shouldSetup = await generateAlert("Welcome to Pixel Widget!","Thanks for choosing pixel widget!\nAre you first to Pixel Widget?",["I have used","Yep, I'm newbie"])
-  if(shouldSetup) {
-    let setupAnnounce = await generateAlert("Okay!","Before using pixel widget, you need to do a few things. First, Let me check your device's Permission! also, please Activate iCloud Drive to store information.",["Check Permission"])
-    const events = await CalendarEvent.today([])
-    let futureEvents = []
-    
-    let setupAPIKey = await generateAlert("Getting Weather API","Then, you have to enter Openweather API Key to use weather function. Please copy your API Key and continue.",["Okay, I'm ready"])
-    
-    var APIKey = Pasteboard.pasteString()
-    let setupCityID = await generateAlert("Getting City ID","You're almost there! Since widget uses fixed weather location, please copy your City ID and continue.",["Okay, I'm ready"])
-    
-    var CityID = Pasteboard.pasteString()
-    let setupFont = await generateAlert("Install Font Profile","For better Pixel Experience, We prepared pixel style font profile! Please install it.",["Install Profile"])
-    var installFont = await new Request("https://pastebin.com/raw/rfHS7Xey").loadString()
-    await Safari.openInApp(installFont, false)
-    
-    let setupJSON = await generateAlert("All Done","Okay, You're ready now!\nGetting preference data...",["Kick off"])
-    
-    defaultJSON.apikey = APIKey
-    defaultJSON.cityid = CityID
-    await fm.writeString(prefPath, JSON.stringify(defaultJSON))
-  } else {
-  let setupDirect = await generateAlert("All Done","Well, then you can add your data in Preference file!",["Kick off"])
+  welcomemode = 1
   await fm.writeString(prefPath, JSON.stringify(defaultJSON))
-  }
-}
-
-// Do NOT edit this area
-var verData = JSON.parse(fm.readString(fm.joinPath(filePath, "pixelVer.txt")))
-const updateServer = "https://pastebin.com/raw/DX6AeT4C"
-var latestVer = await new Request(updateServer).loadString()
-
-const plupserver = "https://pastebin.com/raw/SwSPeM48"
-var latestPl = await new Request(plupserver).loadString()
-
-if(verData.ignore) {
-  let updateAlert = new Alert()
-  updateAlert.title = "Auto update Stopped"
-  updateAlert.message = "For the best user experience, we recommend turning on Auto Update."
-  updateAlert.addCancelAction("OK")
-  updateAlert.addDestructiveAction("Ignore")
-  let response = await updateAlert.presentAlert()
-  if(response == -1) { return 0 }
-} else if(parseInt(verData.version) < parseInt(latestVer)) {
-  let updateAlert = new Alert()
-  updateAlert.title = "Update Available"
-  updateAlert.message = "There's new version of Pixel Widget available!"
-  updateAlert.addCancelAction("Update")
-  updateAlert.addDestructiveAction("Ignore")
-  let response = await updateAlert.presentAlert()
-  if(response != -1) {
-    Safari.openInApp("https://pastebin.com/raw/ntiKwgUJ", false)
-    return 0
-  }
-}
-
-if(bnumber < parseInt(latestPl)) {
-  let plupAlert = new Alert()
-  plupAlert.title = "Update Available"
-  plupAlert.message = "There's new version of Pixel Launcher available!"
-  plupAlert.addCancelAction("Update")
-  plupAlert.addDestructiveAction("Ignore")
-  let response2 = await plupAlert.presentAlert()
-  if(response2 != -1) {
-    Safari.openInApp("https://pastebin.com/raw/qPEwdQn5", false)
-    return 0
-  }
 }
 
 let plAlert = new Alert()
-plAlert.title = "Pixel Launcher"
-let menuOptions = ["Edit Preferences", "Update Widget", "Reset Widget", "Dev's Discord", "Credit"]
+plAlert.title = welcomemode ? "Welcome to Pixel Widget!" : "Pixel Launcher"
+let menuOptions = ["Edit Preferences", "General Settings"]
 for(const option of menuOptions) {
   plAlert.addAction(option)
 }
-if(verData.license != "pro"){plAlert.addAction("Upgrade to Pro 🚀");}
 plAlert.addCancelAction("Done")
-let response = await plAlert.presentSheet()
-if(response == 0){
-  
-} else if(response == 1){
-  var updateL = await new Request("https://pastebin.com/raw/ntiKwgUJ").loadString()
-  Safari.openInApp(updateL, false)
-  return 0
+let response = await plAlert.presentAlert()
+if(response == 1){
+  settingmode = 1
 } else if(response == 2) {
-  let resetAlert = new Alert()
-  resetAlert.title = "Reset Confirmation"
-  resetAlert.message = "Do you really want to reset all Data? This includes Preference, and Version Data."
-  resetAlert.addCancelAction("Cancel")
-  resetAlert.addDestructiveAction("Confirm")
-  let response = await resetAlert.presentAlert()
-  if(response != -1) {
-    fm.remove(prefPath)
-    fm.remove(fm.joinPath(filePath, "pixelVer.txt"))
-    return 0
-  }
-  return 0
-} else if(response == 3) {
-  var discordL = await new Request("https://pastebin.com/raw/Yzt84Vi8").loadString()
-  Safari.openInApp(discordL, false)
-  return 0
-} else if(response == 4) {
-  let devAlert = new Alert()
-  devAlert.title = "Credit"
-  devAlert.message = "Made by unvsDev\nwith italoboy & mvan231!\nShoutout to Beta Testers! 🔥"
-  devAlert.addAction("OK")
-  await devAlert.presentAlert()
-  return 0
-} else if(response == 5) {
-  if(verData.license != "pro"){
-    let proAlert = new Alert()
-    proAlert.title = "Upgrade to Pro 🔥"
-    proAlert.message = "Pixel Widget Pro is coming soon!\nWith Pro Features! Stay tuned! 💜"
-    proAlert.addAction("OK")
-    await proAlert.presentAlert()
-    return 0
-  }
+  
 } else if(response == -1) {
   return 0
 }
+
+
+// General Settings
+if(settingmode){
+  let settings = new UITable()
+  settings.showSeparators = true
+  
+  const option1 = new UITableRow()
+  option1.dismissOnSelect = false
+  option1.addText("Install Font Profile")
+  settings.addRow(option1)
+  
+  option1.onSelect = async () => {
+    var fontURL = await new Request("https://pastebin.com/raw/rfHS7Xey").loadString()
+    Safari.openInApp(fontURL, false)
+  }
+  
+  const option2 = new UITableRow()
+  option2.dismissOnSelect = true
+  option2.addText("Reset Widget")
+  settings.addRow(option2)
+  
+  option2.onSelect = async () => {
+    let resetAlert = new Alert()
+    resetAlert.title = "Reset Confirmation"
+    resetAlert.message = "Do you really want to reset all Data? This includes Preference, and Your secure data."
+    resetAlert.addCancelAction("Cancel")
+    resetAlert.addDestructiveAction("Confirm")
+    let response = await resetAlert.presentAlert()
+    if(response != -1) {
+      fm.remove(prefPath)
+      return 0
+    }
+    await settings.present()
+  }
+  
+  const option3 = new UITableRow()
+  option3.dismissOnSelect = true
+  option3.addText("Request Force Update", "Current: v" + version)
+  settings.addRow(option3)
+  
+  option3.onSelect = async () => {
+    fm.writeString(namePath, "forceupdate")
+    let fuAlert = new Alert()
+    fuAlert.title = "Requested Update"
+    fuAlert.message = "Launch Pixel Widget to begin Update. Your Preferences won't be deleted."
+    fuAlert.addAction("OK")
+    
+    await fuAlert.present()
+    
+    await settings.present()
+  }
+  
+  const option4 = new UITableRow()
+  option4.dismissOnSelect = false
+  option4.addText("Github")
+  settings.addRow(option4)
+  
+  option4.onSelect = () => {
+    Safari.openInApp("https://github.com/unvsDev/pixel-widget", false)
+  }
+  
+  await settings.present()
+  
+  return 0
+}
+
 
 // Edit Preferences
 fm.downloadFileFromiCloud(prefPath)
@@ -244,18 +219,33 @@ var prevData = {
   "dateformat": prefData.dateformat,
   "quotemode": prefData.quotemode,
   "bgmode": prefData.bgmode,
+  "bglight": prefData.bglight,
+  "bgdark": prefData.bgdark,
   "bgcolor": prefData.bgcolor,
   "iconrefresh": prefData.iconrefresh,
+  "refreshrate": prefData.refreshrate,
   "ddaymode": prefData.ddaymode,
   "ddayname": prefData.ddayname,
-  "ddaytarg": prefData.ddaytarg
+  "ddaytarg": prefData.ddaytarg,
+  "hideb": prefData.hideb,
+  "event": prefData.event
+}
+
+// Auto Update Preferences
+var cnt = 0
+for(i in defaultJSON){
+  if(prevData[i] == undefined){
+    cnt = cnt + 1
+    prevData[i] = defaultJSON[i]
+    console.log("[!] Updating preferences.. (" + cnt + ")")
+  }
 }
 
 const settings = new UITable()
 settings.showSeparators = true
 
 var optionList = []
-for(title in prefData){
+for(title in prevData){
   // Settings List
   const option = new UITableRow()
   optionList.push(title)
@@ -263,13 +253,30 @@ for(title in prefData){
   option.addText(optionName[title], optionFormat[title])
   settings.addRow(option)
   option.onSelect = async (number) => {
-    let editAlert = new Alert()
-    editAlert.title = "Edit " + optionName[optionList[number]]
-    editAlert.addTextField(optionFormat[optionList[number]], prevData[optionList[number]].toString())
-    editAlert.addCancelAction("Cancel")
-    editAlert.addAction("Done")
-    if(await editAlert.present() == 0){
-      prevData[optionList[number]] = editAlert.textFieldValue()
+    if(number != 25 && number != 26){
+      let editAlert = new Alert()
+      editAlert.title = "Edit " + optionName[optionList[number]]
+      editAlert.addTextField(optionFormat[optionList[number]], prevData[optionList[number]].toString())
+      editAlert.addCancelAction("Cancel")
+      editAlert.addAction("Done")
+      if(await editAlert.present() == 0){
+        prevData[optionList[number]] = editAlert.textFieldValue()
+      }
+    }
+    else if(number == 25){
+      prevData.bglight = await DocumentPicker.openFile()
+      let bgPickerAlert = new Alert()
+      bgPickerAlert.title = "Light Wallpaper"
+      bgPickerAlert.message = "Successfully saved your wallpaper!"
+      bgPickerAlert.addAction("OK")
+      await bgPickerAlert.present()
+    } else if(number == 26){
+      prevData.bgdark = await DocumentPicker.openFile()
+      let bgPickerAlert = new Alert()
+      bgPickerAlert.title = "Dark Wallpaper"
+      bgPickerAlert.message = "Successfully saved your wallpaper!"
+      bgPickerAlert.addAction("OK")
+      await bgPickerAlert.present()
     }
   }
 }
