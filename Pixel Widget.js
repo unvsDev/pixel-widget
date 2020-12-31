@@ -1,7 +1,7 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-blue; icon-glyph: space-shuttle;
-// Pixel Widget 2.2 - by unvsDev
+// Pixel Widget 2.3 - by unvsDev
 // with italoboy (Development) & mvan231 (Beta Tester)
 // iOS Scriptable Widget
 // inspired by Google Pixel's "at a Glance"
@@ -10,22 +10,25 @@
 // Contact developer for question, or reporting abuse
 // You can use Discord to contact @unvsDev!
 
-const version = 2.2
+const version = 2.3
 const name = Script.name()
 
 // FileManager
 var fm = FileManager.iCloud()
-var prefPath = fm.joinPath(fm.documentsDirectory(), "pixelPref.txt")
-var aprPath = fm.joinPath(fm.documentsDirectory(), "pixelApr.txt")
-var namePath = fm.joinPath(fm.documentsDirectory(), "plName.txt")
+var fDir = fm.joinPath(fm.documentsDirectory(), "/Pixel Widget")
+if(!fm.fileExists(fDir)){ fm.createDirectory(fDir) }
+var prefPath = fm.joinPath(fDir, "pixelPref.txt")
+var aprPath = fm.joinPath(fDir, "pixelApr.txt")
+var namePath = fm.joinPath(fDir, "plName.txt")
+var progPath = fm.joinPath(fDir, "plPlugin.txt")
 
-const plName = fm.readString(namePath)
+const plName = JSON.parse(fm.readString(namePath))
 
 var minVer = parseFloat(await new Request("https://github.com/unvsDev/pixel-widget/raw/main/VERSION").loadString())
 
-if(minVer > version || plName == "forceupdate"){
+if(minVer > version || plName.update == "true"){
   var plCode = await new Request("https://github.com/unvsDev/pixel-widget/raw/main/Pixel%20Launcher.js").loadString()
-  fm.writeString(fm.joinPath(fm.documentsDirectory(), plName + ".js"), plCode)
+  fm.writeString(fm.joinPath(fm.documentsDirectory(), plName.name + ".js"), plCode)
   
   var code = await new Request("https://github.com/unvsDev/pixel-widget/raw/main/Pixel%20Widget.js").loadString()
   fm.writeString(fm.joinPath(fm.documentsDirectory(), name + ".js"), code)
@@ -401,7 +404,7 @@ if (futureEvents.length != 0 && prefData.event == "true") { // has event
 
 } else if (prefData.ddaymode == "true") {
     // Show dday
-    let ddayLabel = pwidget.addText(countDay())
+    let ddayLabel = pwidget.addText(countDayPrecise(prefData.ddayname, prefData.ddaytarg))
     ddayLabel.font = new Font(FONT_NAME_BOLD, TEXT_SIZE);
     ddayLabel.textColor = TEXT_COLOR
     ddayLabel.centerAlignText()
@@ -487,11 +490,11 @@ if (futureEvents.length != 0 && prefData.event == "true") { // has event
     weatherIcon.url = "https://openweathermap.org/city/" + CITY_WEATHER
 
     hStack.addSpacer()
-
-    pwidget.addSpacer(8)
     
     if(prefData.hideb == "false"){
       // Second Line
+      pwidget.addSpacer(8)
+      
       let hStack2 = pwidget.addStack()
       hStack2.layoutHorizontally()
   
@@ -557,19 +560,93 @@ if (futureEvents.length != 0 && prefData.event == "true") { // has event
 }
 
 /*
-
-You can add your custom label, progressBar, or image in this area. After making main layout, the widget will start to add your code under there.
-
-Let's begin!
-
+Built-in Plugins start here. You can set various modules to your Pixel Widget!
+For further information, Tap "Manage Plugin" menu in Pixel Launcher (* Require version 2.3 or Higher)
 */
 
-// Your code should start here...
+var progData = JSON.parse(fm.readString(progPath))
 
+if(progData.minimemo.length > 0) {
+  pwidget.addSpacer(3)
+  let mStack = pwidget.addStack()
+  mStack.layoutHorizontally()
+  mStack.addSpacer()
+  let mLabel = mStack.addText(progData.minimemo)
+  mLabel.font = new Font(FONT_NAME, 12)
+  mLabel.textColor = TEXT_COLOR
+  mLabel.textOpacity = 0.8
+  mStack.addSpacer()
+}
 
+if(progData.minidday[0].length > 0) {
+  pwidget.addSpacer(3)
+  let cdStack = pwidget.addStack()
+  cdStack.layoutHorizontally()
+  cdStack.addSpacer()
+  let cdLabel = cdStack.addText(countDayPrecise(progData.minidday[1], progData.minidday[0]))
+  cdLabel.font = new Font(FONT_NAME, 12)
+  cdLabel.textColor = TEXT_COLOR
+  cdLabel.textOpacity = 0.8
+  cdStack.addSpacer()
+}
 
-// and End here.
+if(progData.covidkr1 == true) {
+  const cDir = fm.joinPath(fm.documentsDirectory(), "/coronaAlpha")
+  if(!fm.fileExists(cDir + "/index.js")){fm.createDirectory(cDir)}
+  fm.writeString(cDir + "/index.js", await new Request("https://github.com/unvsDev/corona-alpha/raw/main/exportModule.js").loadString())
+  let cModule = await importModule('/coronaAlpha')
+  await cModule.getData()
+  const currentData = await cModule.getCurrent()
+  const currentCnt = currentData[0]
+  const currentGap = currentData[1]
+  const totalGap = await cModule.getPrevTot()
+  pwidget.addSpacer(3)
+  let cStack = pwidget.addStack()
+  cStack.layoutHorizontally()
+  cStack.addSpacer()
+  let cSymbol = SFSymbol.named("sun.min.fill")
+  let cIcon = cStack.addImage(cSymbol.image)
+  cIcon.tintColor = new Color("#fcbd00")
+  cIcon.imageSize = new Size(11, 11)
+  cStack.addSpacer(3)
+  let cLabel = cStack.addText("코로나19 라이브: " + currentCnt + "명 (" + currentGap + "명) • 어제: " + totalGap + "명")
+  cLabel.font = new Font(FONT_NAME, 12)
+  cLabel.textColor = new Color("#fcbd00")
+  cLabel.url = "https://corona-live.com"
+  cStack.addSpacer()
+}
 
+if(progData.covidkr2 == "Kakao") {
+  pwidget.addSpacer(3)
+  let cStack2 = pwidget.addStack()
+  cStack2.layoutHorizontally()
+  cStack2.addSpacer()
+  let cSymbol2 = SFSymbol.named("arrowshape.turn.up.right.fill")
+  let cIcon2 = cStack2.addImage(cSymbol2.image)
+  cIcon2.tintColor = new Color("#fcbd00")
+  cIcon2.imageSize = new Size(11, 11)
+  cStack2.addSpacer(3)
+  let cLabel2 = cStack2.addText("카카오 QR 체크인")
+  cLabel2.font = new Font(FONT_NAME, 12)
+  cLabel2.textColor = new Color("#fcbd00")
+  cLabel2.url = "kakaotalk://con/web?url=https://accounts.kakao.com/qr_check_in"
+  cStack2.addSpacer()
+} else if(progData.covidkr2 == "Naver") {
+  pwidget.addSpacer(3)
+  let cStack2 = pwidget.addStack()
+  cStack2.layoutHorizontally()
+  cStack2.addSpacer()
+  let cSymbol2 = SFSymbol.named("arrowshape.turn.up.right.fill")
+  let cIcon2 = cStack2.addImage(cSymbol2.image)
+  cIcon2.tintColor = new Color("#fcbd00")
+  cIcon2.imageSize = new Size(11, 11)
+  cStack2.addSpacer(3)
+  let cLabel2 = cStack2.addText("네이버 QR 체크인")
+  cLabel2.font = new Font(FONT_NAME, 12)
+  cLabel2.textColor = new Color("#fcbd00")
+  cLabel2.url = "https://nid.naver.com/login/privacyQR"
+  cStack2.addSpacer()
+}
 
 
 // Optional Module
@@ -634,21 +711,26 @@ function renderBatteryIcon( batteryLevel, charging = false ) { // Getting Batter
     return draw.getImage()
 }
 
-function countDay() {
-  var name = prefData.ddayname;
-  var now = new Date();
-  var then = new Date(prefData.ddaytarg);
-  var gap = now.getTime() - then.getTime();
-  gap = gap / (1000 * 60 * 60 * 24);
-  var count = Math.floor(gap);
-  if(gap > -1 && gap < 1) {
-    return name + " today"
-  } else if(gap < 0) {
-    count = count * -1;
-    return count + " days to " + name
-  } else {
-    return count + " days from " + name
-  }
+// Precise Day counting
+function formatDefTime(date) {
+  let df = new DateFormatter()
+  df.useShortDateStyle()
+  df.locale = ""
+  return df.string(date)
+}
+
+function countDayPrecise(name, target) {
+  let defToday = new Date(formatDefTime(new Date())).getTime()
+  let defTarget = new Date(target).getTime()
+  
+  var gap = defTarget - defToday
+  gap = gap / (1000 * 60 * 60 * 24)
+  var count = Math.ceil(gap)
+  
+  if(gap == 0) { return name + " is Today" }
+  else if(gap == 1) { return gap + " day to " + name }
+  else if(gap > 0) { return gap + " days to " + name }
+  else { return (gap*-1)+1 + " days from " + name }
 }
 
 // Refresh Text
@@ -682,12 +764,19 @@ function setupGradient() {
 
 // Widget Background
 if(prefData.bgmode == "auto") {
+  if(prefData.wallrefresh == "true") {
+    fm.downloadFileFromiCloud(prefData.bgdark);
+    fm.downloadFileFromiCloud(prefData.bglight);
+  }
   if(darkMode){
     pwidget.backgroundImage = fm.readImage(prefData.bgdark)
   } else {
     pwidget.backgroundImage = fm.readImage(prefData.bglight)
   }
 } else if(prefData.bgmode == "fixed") {
+  if(prefData.wallrefresh == "true") {
+    fm.downloadFileFromiCloud(prefData.bglight);
+  }
   pwidget.backgroundImage = fm.readImage(prefData.bglight)
 } else if(prefData.bgmode == "solid") {
   pwidget.backgroundColor = new Color(prefData.bgcolor)
