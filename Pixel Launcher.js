@@ -130,10 +130,10 @@ const orgProgData = {
   'frame2': '#fff',
 };
 
-let welcomemode = 0;
+let welcomeMode = 0;
 
 if (!fm.fileExists(prefPath)) {
-  welcomemode = 1;
+  welcomeMode = 1;
   await fm.writeString(prefPath, JSON.stringify(defaultJSON));
 }
 
@@ -204,7 +204,7 @@ if (!fm.fileExists(wallPath)) {
   fm.writeString(wallPath, JSON.stringify(wallJSON));
 }
 
-if (welcomemode) {
+if (welcomeMode) {
   const wAlert = new Alert();
   wAlert.title = '환영합니다 🤩';
   wAlert.message = '픽셀 위젯에 오신 것을 환영합니다!\n시작하기 전에, Pixel 스타일의 멋진 폰트를 설치해 보세요.';
@@ -266,7 +266,7 @@ async function showMainPanel() {
     const title = new UITableRow();
     title.isHeader = true;
     title.height = 120;
-    title.addText(welcomemode ? 'PX3에 오신 것을 환영합니다!' : 'Pixel Widget', '버전 ' + version + ' - developed by unvsDev');
+    title.addText(welcomeMode ? 'PX3에 오신 것을 환영합니다!' : 'Pixel Widget', '버전 ' + version + ' - developed by unvsDev');
     pxPanel.addRow(title);
 
     if (latestVersion !== version) {
@@ -663,12 +663,8 @@ async function showTeaserLayout(name, image) {
     Safari.openInApp('https://widget.oopy.io/plus', true);
   };
 
-  const nothanks = new UITableRow();
-  nothanks.height = 70;
-  nothanks.addText('💩 괜찮아요', '기본 레이아웃 사용하기');
-  nothanks.dismissOnSelect = true;
-  teaserPanel.addRow(nothanks);
-  nothanks.onSelect = () => { };
+  const noThanks = getNoThanksTable('💩 괜찮아요', '기본 레이아웃 사용하기');
+  teaserPanel.addRow(noThanks);
 
   await teaserPanel.present(true);
 }
@@ -691,9 +687,9 @@ async function showWallPanel() {
     const mode = new UITableRow();
     mode.height = 100;
 
-    const mtitle = UITableCell.text('배경 모드');
-    mtitle.leftAligned();
-    mode.addCell(mtitle);
+    const mTitle = UITableCell.text('배경 모드');
+    mTitle.leftAligned();
+    mode.addCell(mTitle);
 
     const left = UITableCell.button('⬅️');
     const current = UITableCell.button(wallOption[wallData.mode]);
@@ -950,13 +946,13 @@ async function showPluginPanel() {
       }
     };
 
-    const minimemo = new UITableRow();
-    minimemo.dismissOnSelect = false;
-    minimemo.addText('메모콘', '짧은 메모에 나만의 명언, 투두를 적어보세요!');
-    minimemo.height = 60;
-    pluginMenu.addRow(minimemo);
+    const miniMemo = new UITableRow();
+    miniMemo.dismissOnSelect = false;
+    miniMemo.addText('메모콘', '짧은 메모에 나만의 명언, 투두를 적어보세요!');
+    miniMemo.height = 60;
+    pluginMenu.addRow(miniMemo);
 
-    minimemo.onSelect = async () => {
+    miniMemo.onSelect = async () => {
       const pAlert = new Alert();
       pAlert.title = '메모콘 편집';
       pAlert.message = (
@@ -972,13 +968,13 @@ async function showPluginPanel() {
       }
     };
 
-    const minidday = new UITableRow();
-    minidday.dismissOnSelect = false;
-    minidday.addText('디데이콘', '디데이 카운터와 함께 중요한 날을 놓치지 마세요.');
-    minidday.height = 60;
-    pluginMenu.addRow(minidday);
+    const miniDday = new UITableRow();
+    miniDday.dismissOnSelect = false;
+    miniDday.addText('디데이콘', '디데이 카운터와 함께 중요한 날을 놓치지 마세요.');
+    miniDday.height = 60;
+    pluginMenu.addRow(miniDday);
 
-    minidday.onSelect = async () => {
+    miniDday.onSelect = async () => {
       const pAlert = new Alert();
       pAlert.title = '디데이콘 편집';
       pAlert.message = (
@@ -996,13 +992,13 @@ async function showPluginPanel() {
       }
     };
 
-    const covidkr1 = new UITableRow();
-    covidkr1.dismissOnSelect = false;
-    covidkr1.addText('코로나콘', '대한민국 코로나19 확진자 정보를 간단히 알려줍니다.');
-    covidkr1.height = 60;
-    pluginMenu.addRow(covidkr1);
+    const covidKr1 = new UITableRow();
+    covidKr1.dismissOnSelect = false;
+    covidKr1.addText('코로나콘', '대한민국 코로나19 확진자 정보를 간단히 알려줍니다.');
+    covidKr1.height = 60;
+    pluginMenu.addRow(covidKr1);
 
-    covidkr1.onSelect = async () => {
+    covidKr1.onSelect = async () => {
       const pAlert = new Alert();
       pAlert.title = '코로나콘 편집';
       pAlert.message = '현재 ' + (progData.covidkr1 ? '보이도록' : '숨겨지도록') + ' 설정되어 있습니다.';
@@ -1011,13 +1007,13 @@ async function showPluginPanel() {
       progData.covidkr1 = !await pAlert.present();
     };
 
-    const covidkr2 = new UITableRow();
-    covidkr2.dismissOnSelect = false;
-    covidkr2.addText('큐알콘', 'QR 체크인 바로가기와 개인 안심번호를 표시하실 수 있습니다.');
-    covidkr2.height = 60;
-    pluginMenu.addRow(covidkr2);
+    const covidKr2 = new UITableRow();
+    covidKr2.dismissOnSelect = false;
+    covidKr2.addText('큐알콘', 'QR 체크인 바로가기와 개인 안심번호를 표시하실 수 있습니다.');
+    covidKr2.height = 60;
+    pluginMenu.addRow(covidKr2);
 
-    covidkr2.onSelect = async () => {
+    covidKr2.onSelect = async () => {
       const pAlert = new Alert();
       pAlert.title = '큐알콘 편집';
       const progOption = {
@@ -1052,13 +1048,13 @@ async function showPluginPanel() {
     };
 
     // PhotoCon - Developed by Euny
-    const miniphoto = new UITableRow();
-    miniphoto.dismissOnSelect = false;
-    miniphoto.addText('포토콘', '보고 싶은 사진을 누구보다 이쁘게 꾸며보세요!');
-    miniphoto.height = 60;
-    pluginMenu.addRow(miniphoto);
+    const miniPhoto = new UITableRow();
+    miniPhoto.dismissOnSelect = false;
+    miniPhoto.addText('포토콘', '보고 싶은 사진을 누구보다 이쁘게 꾸며보세요!');
+    miniPhoto.height = 60;
+    pluginMenu.addRow(miniPhoto);
 
-    miniphoto.onSelect = async () => {
+    miniPhoto.onSelect = async () => {
       const pAlert = new Alert();
       pAlert.title = '포토콘 편집';
       pAlert.message = (
@@ -1107,6 +1103,14 @@ async function showPluginPanel() {
   await fm.writeString(progPath, JSON.stringify(progData));
 }
 
+function getNoThanksTable(title, subtitle) {
+  const noThanks = new UITableRow();
+  noThanks.height = 70;
+  noThanks.addText(title, subtitle);
+  noThanks.dismissOnSelect = true;
+  noThanks.onSelect = () => { };
+  return noThanks;
+}
 
 async function showTeaser(message, url, term, short) {
   const teaserPanel = new UITable();
@@ -1136,12 +1140,8 @@ async function showTeaser(message, url, term, short) {
     Safari.openInApp('https://widget.oopy.io/plus', true);
   };
 
-  const nothanks = new UITableRow();
-  nothanks.height = 70;
-  nothanks.addText('💩 괜찮아요', short);
-  nothanks.dismissOnSelect = true;
-  teaserPanel.addRow(nothanks);
-  nothanks.onSelect = () => { };
+  const noThanks = getNoThanksTable('💩 괜찮아요', short);
+  teaserPanel.addRow(noThanks);
 
   await teaserPanel.present(true);
 }
@@ -1182,7 +1182,7 @@ async function showSettingPanel() {
       'naversearchapp://inappbrowser?url=https://nid.naver.com/login/privacyQR',
       'kakaotalk://con/web?url=https://accounts.kakao.com/qr_check_in',
     ];
-    for (let i = 0; i<sData.length; i++) {
+    for (let i = 0; i < sData.length; i++) {
       const bt = new UITableRow();
       bt.height = i ? 55 : 70;
       bt.addText(sData[i], i ? null : '위젯 속성에 설정된 동작을 실행합니다. (기본값)');

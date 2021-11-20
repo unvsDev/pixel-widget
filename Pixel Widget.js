@@ -200,13 +200,13 @@ async function fetchWeatherData(url) {
   return await request.loadJSON();
 }
 
-let wetherurl;
-let LAT;
-let LON;
+let weatherUrl;
 if (CITY_WEATHER !== 'false') {
-  wetherurl = `https://api.openweathermap.org/data/2.5/weather?id=${CITY_WEATHER}&APPID=${API_WEATHER}&units=${TEMP_UNIT}`;
+  weatherUrl = `https://api.openweathermap.org/data/2.5/weather?id=${CITY_WEATHER}&APPID=${API_WEATHER}&units=${TEMP_UNIT}`;
 } else {
   let latLong = {};
+  let LAT;
+  let LON;
   try {
     Location.setAccuracyToHundredMeters();
     latLong = await Location.current();
@@ -226,23 +226,23 @@ if (CITY_WEATHER !== 'false') {
     }
   }
 
-  wetherurl = `https://api.openweathermap.org/data/2.5/weather?lat=${LAT}&lon=${LON}&units=${TEMP_UNIT}&appid=${API_WEATHER}`;
+  weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${LAT}&lon=${LON}&units=${TEMP_UNIT}&appid=${API_WEATHER}`;
 }
 
 let weatherJSON;
-let cityName; let weatherarry; let iconData;
+let cityName; let weatherArray; let iconData;
 try {
-  weatherJSON = await fetchWeatherData(wetherurl);
+  weatherJSON = await fetchWeatherData(weatherUrl);
   cityName = weatherJSON.name;
-  weatherarry = weatherJSON.weather;
-  iconData = weatherarry[0].icon;
+  weatherArray = weatherJSON.weather;
+  iconData = weatherArray[0].icon;
 } catch (e) {
   if (fm.fileExists(dataPath)) {
     weatherJSON = JSON.parse(fm.readString(dataPath));
     // eslint-disable-next-line no-unused-vars
     cityName = weatherJSON.name;
-    weatherarry = weatherJSON.weather;
-    iconData = weatherarry[0].icon;
+    weatherArray = weatherJSON.weather;
+    iconData = weatherArray[0].icon;
   } else {
     console.log(weatherJSON);
     throw new Error(
@@ -254,16 +254,16 @@ try {
 
 await fm.writeString(dataPath, JSON.stringify(weatherJSON));
 
-let offlinemode;
+let offlineMode;
 try {
   await new Request('https://pastebin.com/raw/94LKAJvT').loadString();
-  offlinemode = false;
+  offlineMode = false;
 } catch (e) {
-  offlinemode = true;
+  offlineMode = true;
 }
 
 // eslint-disable-next-line no-unused-vars
-const weathername = weatherarry[0].main;
+const weatherName = weatherArray[0].main;
 const curTempObj = weatherJSON.main;
 const curTemp = curTempObj.temp;
 // eslint-disable-next-line no-unused-vars
@@ -285,7 +285,7 @@ function formatDate(format, date) {
 
 // Holiday customization
 const holidaysByKey = {
-  // month,week,day: datetext
+  // month, week, day: date text
   '11,4,4': 'Happy Thanksgiving!',
 };
 
@@ -413,7 +413,7 @@ if (futureEvents.length !== 0 && prefData.event === 'true') { // has event
   weatherIcon.centerAlignImage();
   tintIcon(weatherIcon);
 
-  // Tempeture Label
+  // Temperature Label
   const tempLabel = hStack.addText(` ${Math.round(curTemp).toString()}${TEMP_TEXT}`);
   tempLabel.font = new Font(FONT_NAME, 16);
   tempLabel.textColor = TEXT_COLOR;
@@ -467,10 +467,10 @@ if (futureEvents.length !== 0 && prefData.event === 'true') { // has event
   df0.useLongDateStyle();
   df0.locale = prefData.locale;
   date = new Date(layoutData.ddaytarg);
-  const ddaytarget = hStack.addText(df0.string(date));
-  ddaytarget.font = new Font(FONT_NAME, 16);
-  ddaytarget.textColor = TEXT_COLOR;
-  ddaytarget.textOpacity = (0.7);
+  const ddayTarget = hStack.addText(df0.string(date));
+  ddayTarget.font = new Font(FONT_NAME, 16);
+  ddayTarget.textColor = TEXT_COLOR;
+  ddayTarget.textOpacity = (0.7);
 
   hStack.addSpacer(8);
 
@@ -533,7 +533,7 @@ if (futureEvents.length !== 0 && prefData.event === 'true') { // has event
 
   hStack.addSpacer(3);
 
-  // Tempeture Label
+  // Temperature Label
   const tempLabel = hStack.addText(Math.round(curTemp).toString() + TEMP_TEXT);
   tempLabel.font = new Font(FONT_NAME, TEXT_SIZE);
   tempLabel.textColor = TEXT_COLOR;
@@ -592,7 +592,7 @@ if (futureEvents.length !== 0 && prefData.event === 'true') { // has event
 
   hStack.addSpacer(3);
 
-  // Tempeture Label
+  // Temperature Label
   const tempLabel = hStack.addText(Math.round(curTemp).toString() + TEMP_TEXT);
   tempLabel.font = new Font(FONT_NAME, 16);
   tempLabel.textColor = TEXT_COLOR;
@@ -679,7 +679,7 @@ if (progData.minidday[0].length > 0) {
   }
 }
 
-if (progData.covidkr1 === true && !offlinemode) {
+if (progData.covidkr1 === true && !offlineMode) {
   const cDir = fm.joinPath(fm.documentsDirectory(), '/coronaAlpha');
   if (!fm.fileExists(cDir + '/index.js')) {
     fm.createDirectory(cDir);
@@ -803,11 +803,11 @@ function batteryModule(stack) {
   batteryImg.tintColor = new Color(prefData.bColor, 0.7);
   tintIcon(batteryImg);
   batteryImg.imageSize = new Size(25, 18);
-  const batterytext = stack.addText(' ' + renderBattery() + '%');
-  batterytext.font = new Font(FONT_NAME, 16);
-  batterytext.textColor = TEXT_COLOR;
-  batterytext.textOpacity = (0.7);
-  batterytext.centerAlignText();
+  const batteryText = stack.addText(' ' + renderBattery() + '%');
+  batteryText.font = new Font(FONT_NAME, 16);
+  batteryText.textColor = TEXT_COLOR;
+  batteryText.textOpacity = (0.7);
+  batteryText.centerAlignText();
 }
 
 function renderBattery() { // Getting Battery Level (Number)
@@ -949,13 +949,13 @@ if (wallData.mode === 1) {
 } else if (wallData.mode === 0) {
   pwidget.backgroundColor = new Color(wallData.color);
 } else {
-  let bgimagePath;
+  let bgImagePath;
   if (darkMode && wallData.book2 !== '') {
-    bgimagePath = fm.bookmarkedPath(wallData.book2);
+    bgImagePath = fm.bookmarkedPath(wallData.book2);
   } else {
-    bgimagePath = fm.bookmarkedPath(wallData.book1);
+    bgImagePath = fm.bookmarkedPath(wallData.book1);
   }
-  pwidget.backgroundImage = fm.readImage(bgimagePath);
+  pwidget.backgroundImage = fm.readImage(bgImagePath);
 }
 
 pwidget.refreshAfterDate = new Date(Date.now() + 1000 * parseInt(prefData.refreshrate)); // Refresh every 120 Second
