@@ -332,13 +332,6 @@ async function showMainPanel() {
 
   loadAllRows();
   await pxPanel.present();
-
-  // eslint-disable-next-line no-unused-vars
-  function refreshAllRows() {
-    pxPanel.removeAllRows();
-    loadAllRows();
-    pxPanel.reload();
-  }
 }
 
 await showMainPanel();
