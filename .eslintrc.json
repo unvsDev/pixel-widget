@@ -1,0 +1,20 @@
+{
+    "parser": "@babel/eslint-parser",
+    "env": {
+        "browser": true,
+        "es2021": false
+    },
+    "extends": [
+        "eslint:recommended",
+        "google"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+    },
+    "rules": {
+        "require-jsdoc": 0,
+        "no-undef": 0,
+        "max-len": ["error", { "code": 130 }]
+    }
+}
