@@ -1,0 +1,14 @@
+{
+  "name": "pixel-widget",
+  "version": "3.1",
+  "description": "",
+  "author": "unvsDev",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/eslint-parser": "^7.16.3",
+    "@types/scriptable-ios": "^1.6.3",
+    "eslint": "^8.2.0",
+    "eslint-config-google": "^0.14.0"
+  }
+}
